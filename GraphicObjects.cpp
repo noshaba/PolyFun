@@ -127,6 +127,7 @@ bool GraphicObject::selected(void){
 */
 RenderObject::RenderObject(double xpos, double ypos, double width, double height, std::string path) : GraphicObject(xpos, ypos, width, height){
 	imgPath = path;
+	this->loadTexture(path);
 }
 /**
 * Destructor of 'RenderObject'. Called when a 'RenderObject' has to free memory or do other clean up when the object is destroyed.
@@ -141,23 +142,20 @@ std::string RenderObject::getImgPath(void){
 * @param imgPath - Path of the texture
 * @return texture - Texture ID
 */
-GLuint RenderObject::loadTexture(std::string imgPath){
-	GLuint texture;  //variable for texture
+void RenderObject::loadTexture(std::string imgPath){
 	glGenTextures(1,&texture); //allocate the memory for texture
 	glBindTexture(GL_TEXTURE_2D,texture); //Binding the texture
 	if(glfwLoadTexture2D(imgPath.c_str(), GLFW_BUILD_MIPMAPS_BIT)){
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-		return texture;
 	}
-	return -1;
 }
 /**
 * 'display' renders the object's texture to the stage.
 */
 void RenderObject::display(void){
 	// default display
-	GLuint textID = loadTexture(imgPath);
+	glBindTexture(GL_TEXTURE_2D,texture); //Binding the texture
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D); //Enable texture
 	glBegin(GL_POLYGON); //Begin quadrilateral coordinates
@@ -650,29 +648,29 @@ bool Button::activated(void){
 * It renders the button according to their current activation states and to their colours.
 */
 void Button::display(void){
-	GLuint textID = loadTexture(imgPath);
+	glBindTexture(GL_TEXTURE_2D,texture); //Binding the texture
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D); //Enable texture
 	glBegin(GL_POLYGON); //Begin quadrilateral coordinates 
 	if(name != "colours" && activation){
 		// change the texture when a button is activated, except for the colours button
-		glTexCoord2f(0.5f,1.0f); // top left corner
-		glVertex2f(traits.xpos,traits.ypos);
-		glTexCoord2f(1.0f,1.0f); // top right corner
-		glVertex2f(traits.xpos + traits.width,traits.ypos);
-		glTexCoord2f(1.0f,0.0f); // bottom right corner
-		glVertex2f(traits.xpos + traits.width, traits.ypos + traits.height);
-		glTexCoord2f(0.5f,0.0f); // bottom left corner
-		glVertex2f(traits.xpos, traits.ypos + traits.height);
+		// top left corner
+		glTexCoord2f(0.5f,1.0f); glVertex2f(traits.xpos,traits.ypos);
+		// top right corner
+		glTexCoord2f(1.0f,1.0f); glVertex2f(traits.xpos + traits.width,traits.ypos);
+		// bottom right corner
+		glTexCoord2f(1.0f,0.0f); glVertex2f(traits.xpos + traits.width, traits.ypos + traits.height);
+		// bottom left corner
+		glTexCoord2f(0.5f,0.0f); glVertex2f(traits.xpos, traits.ypos + traits.height);
 	} else if(name != "colours" && !activation){
-		glTexCoord2f(0.0f,1.0f); // top left corner
-		glVertex2f(traits.xpos,traits.ypos);
-		glTexCoord2f(0.5f,1.0f); // top right corner
-		glVertex2f(traits.xpos + traits.width,traits.ypos);
-		glTexCoord2f(0.5f,0.0f); // bottom right corner
-		glVertex2f(traits.xpos + traits.width, traits.ypos + traits.height);
-		glTexCoord2f(0.0f,0.0f); // bottom left corner
-		glVertex2f(traits.xpos, traits.ypos + traits.height);
+		// top left corner
+		glTexCoord2f(0.0f,1.0f); glVertex2f(traits.xpos,traits.ypos);
+		// top right corner
+		glTexCoord2f(0.5f,1.0f); glVertex2f(traits.xpos + traits.width,traits.ypos);
+		// bottom right corner
+		glTexCoord2f(0.5f,0.0f); glVertex2f(traits.xpos + traits.width, traits.ypos + traits.height);
+		// bottom left corner
+		glTexCoord2f(0.0f,0.0f); glVertex2f(traits.xpos, traits.ypos + traits.height);
 	} else {
 		if(name == "colours") glColor3f(grayShade, grayShade, grayShade);	// set grey shade for the colours
 		glTexCoord2f(0.0f,1.0f); // top left corner

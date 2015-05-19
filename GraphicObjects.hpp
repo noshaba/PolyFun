@@ -84,12 +84,11 @@
 	class RenderObject : public GraphicObject{
 		protected:
 			std::string imgPath; // Image path of the texture
-			GLuint texture;
 		public:
 			RenderObject(double xpos, double ypos, double width, double height, std::string path); // Constructor
 			~RenderObject(void); // Destructor
 			std::string getImgPath(void); // Returns the image path of the texture
-			void loadTexture(std::string imgPath); // Loads the texture and adds a texture ID to it which is being returned
+			static GLuint loadTexture(std::string imgPath); // Loads the texture and adds a texture ID to it which is being returned
 			void display(void); // default render option to display the texture
 	};
 	
